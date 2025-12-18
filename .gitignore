@@ -70,7 +70,7 @@ Thumbs.db
 desktop.ini
 
 # Database and vector store files
-chroma_db/
+# chroma_db/
 *.db
 *.sqlite
 *.sqlite3
@@ -79,7 +79,7 @@ vector_store/
 embeddings/
 
 # Large data files
-data/*.csv
+# data/*.csv
 data/*.json
 data/*.xml
 data/*.parquet

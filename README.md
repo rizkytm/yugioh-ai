@@ -45,20 +45,41 @@ export HUGGINGFACEHUB_API_TOKEN="hf_your_actual_token_here"
 export TOKENIZERS_PARALLELISM="false"
 ```
 
-### Step 3: Build Vector Store
+### Step 3: Scrape Yu-Gi-Oh! Card Data
+
+Scrape the Yu-Gi-Oh! card database from the official API:
+
+**Option A: Scrape ALL Cards (Recommended)**
+```bash
+python data/scraper.py --all
+```
+This will collect all 12,000+ Yu-Gi-Oh! cards available in the database.
+
+**Option B: Scrape Specific Number of Pages**
+```bash
+python data/scraper.py --pages 10
+```
+This will scrape 10 pages (1,000 cards).
+
+**Option C: Default (5 pages)**
+```bash
+python data/scraper.py
+```
+
+### Step 4: Build Vector Store
 
 Build the search index from Yu-Gi-Oh! card data:
 ```bash
 python pipeline/build_pipeline.py
 ```
 
-Expected output:
+Expected output (for full dataset):
 ```
-Processed 500 Yu-Gi-Oh! cards
+Processed 12,847 Yu-Gi-Oh! cards
 Yu-Gi-Oh! vector store built successfully...
 ```
 
-### Step 4: Launch Application
+### Step 5: Launch Application
 
 ```bash
 streamlit run app/app.py --server.port=8501
@@ -171,15 +192,39 @@ pipeline = YuGiOhRecommendationPipeline()
 
 The Yu-Gi-Oh! card data is sourced from:
 - **API**: YGOProDeck API (ygoprodeck.com)
-- **Coverage**: 500+ cards across all types
-- **Data includes**: Names, types, effects, stats, attributes, archetypes
+- **Coverage**: 12,000+ cards across all types (monsters, spells, traps)
+- **Data includes**: Names, types, effects, stats, attributes, archetypes, prices, images
 - **Update frequency**: Can be refreshed by re-running the scraper
 
-To update the card database:
+### Scraping Options
+
+**Full Database (Recommended)**:
+```bash
+python data/scraper.py --all
+```
+Collects all 12,000+ available cards in the database.
+
+**Custom Range**:
+```bash
+python data/scraper.py --pages 10
+```
+Scrapes 10 pages (1,000 cards). Adjust the number as needed.
+
+**Default (500 cards)**:
 ```bash
 python data/scraper.py
+```
+Quick test with 5 pages (500 cards).
+
+### Update Process
+
+To refresh the card database with new releases:
+```bash
+python data/scraper.py --all
 python pipeline/build_pipeline.py
 ```
+
+This will fetch the latest card data and rebuild the search index with current information.
 
 ## 🤝 Contributing
 

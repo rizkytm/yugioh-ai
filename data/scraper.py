@@ -154,8 +154,37 @@ class YGOScraper:
 
         return flattened
 
+    def scrape_all_cards(self) -> List[Dict[str, Any]]:
+        """Scrape ALL Yu-Gi-Oh! cards by continuing until API returns empty"""
+        all_cards = []
+        offset = 0
+        batch_size = 100
+        page_number = 1
+
+        while True:
+            logging.info(f"Scraping page {page_number} (offset: {offset})")
+
+            cards = self.scrape_page(offset)
+            if not cards:
+                logging.info(f"No more cards found at offset {offset}. Scraping complete.")
+                break
+
+            all_cards.extend(cards)
+            offset += batch_size
+            page_number += 1
+
+            # Rate limiting - respect API limits
+            time.sleep(1)
+
+            # Progress update every 10 pages
+            if page_number % 10 == 0:
+                logging.info(f"Collected {len(all_cards)} cards so far...")
+
+        logging.info(f"Total cards scraped: {len(all_cards)}")
+        return all_cards
+
     def scrape_multiple_pages(self, num_pages: int = 5) -> List[Dict[str, Any]]:
-        """Scrape multiple pages of cards"""
+        """Scrape specified number of pages of cards"""
         all_cards = []
 
         for page in range(num_pages):
@@ -167,6 +196,7 @@ class YGOScraper:
                 all_cards.extend(cards)
             else:
                 logging.warning(f"No cards found on page {page + 1}")
+                break  # Stop early if no cards found
 
             # Rate limiting - wait between requests
             time.sleep(1)
@@ -241,8 +271,12 @@ class YGOScraper:
         logging.info("Starting Yu-Gi-Oh! card scraping process")
 
         try:
-            # Scrape cards
-            cards = self.scrape_multiple_pages(num_pages)
+            if num_pages is None:
+                # Scrape ALL cards
+                cards = self.scrape_all_cards()
+            else:
+                # Scrape specified number of pages
+                cards = self.scrape_multiple_pages(num_pages)
 
             if cards:
                 # Save to CSV
@@ -257,8 +291,25 @@ class YGOScraper:
 
 def main():
     """Main function to run the scraper"""
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Yu-Gi-Oh! Card Scraper')
+    parser.add_argument('--pages', type=int, help='Number of pages to scrape (default: 5)')
+    parser.add_argument('--all', action='store_true', help='Scrape ALL available cards')
+
+    args = parser.parse_args()
+
     scraper = YGOScraper()
-    scraper.run(num_pages=5)
+
+    if args.all:
+        print("🃏 Scraping ALL Yu-Gi-Oh! cards...")
+        scraper.run(num_pages=None)  # Explicitly pass None for scraping all cards
+    elif args.pages:
+        print(f"🃏 Scraping {args.pages} pages...")
+        scraper.run(num_pages=args.pages)
+    else:
+        print("🃏 Scraping default 5 pages...")
+        scraper.run()  # Default behavior
 
 if __name__ == "__main__":
     main()
