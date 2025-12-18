@@ -1,4 +1,131 @@
-venv/
-logs/
-ANIME_RECOMMENDER.egg-info/
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environments
 .env
+.env.local
+.env.*.local
+venv/
+ENV/
+env/
+.venv/
+conda-env/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.orig
+*.rej
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Database and vector store files
+chroma_db/
+*.db
+*.sqlite
+*.sqlite3
+*.chroma
+vector_store/
+embeddings/
+
+# Large data files
+data/*.csv
+data/*.json
+data/*.xml
+data/*.parquet
+
+# ML and model files
+*.pkl
+*.pickle
+*.h5
+*.model
+*.pth
+*.pt
+models/
+checkpoints/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Logs
+*.log
+logs/
+log_*.log
+scraper.log
+
+# Streamlit
+.streamlit/
+.streamlit/config.toml
+.streamlit/secrets.toml
+.streamlit/credentials.toml
+
+# Temporary and cache files
+.cache
+*.tmp
+*.temp
+cache/
+tmp/
+temp/
+
+# Development artifacts
+*.bak
+*.backup
+*.old
+
+# Configuration files (sensitive)
+config/secrets.yaml
+config/credentials.yaml
+config/local_config.yaml

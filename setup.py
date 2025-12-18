@@ -4,9 +4,9 @@ with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
 setup(
-    name="ANIME-RECOMMENDER",
+    name="YUGIOH-RECOMMENDER",
     version="0.1",
-    author="Sudhanshu",
+    author="rizkytm",
     packages=find_packages(),
     install_requires = requirements,
 )

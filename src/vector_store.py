@@ -1,7 +1,11 @@
-from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.vectorstores import Chroma
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_chroma import Chroma
 from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_huggingface import HuggingFaceEmbeddings
+
+# Set environment variable to avoid tokenizer parallelism warning
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -21,11 +25,11 @@ class VectorStoreBuilder:
 
         data = loader.load()
 
-        splitter = CharacterTextSplitter(chunk_size=1000,chunk_overlap=0)
+        splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
         texts = splitter.split_documents(data)
 
         db = Chroma.from_documents(texts,self.embedding,persist_directory=self.persist_dir)
-        db.persist()
+        # ChromaDB automatically persists when persist_directory is specified
 
     def load_vector_store(self):
         return Chroma(persist_directory=self.persist_dir,embedding_function=self.embedding)
