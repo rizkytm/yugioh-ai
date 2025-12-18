@@ -192,39 +192,15 @@ pipeline = YuGiOhRecommendationPipeline()
 
 The Yu-Gi-Oh! card data is sourced from:
 - **API**: YGOProDeck API (ygoprodeck.com)
-- **Coverage**: 12,000+ cards across all types (monsters, spells, traps)
-- **Data includes**: Names, types, effects, stats, attributes, archetypes, prices, images
+- **Coverage**: 500+ cards across all types
+- **Data includes**: Names, types, effects, stats, attributes, archetypes
 - **Update frequency**: Can be refreshed by re-running the scraper
 
-### Scraping Options
-
-**Full Database (Recommended)**:
-```bash
-python data/scraper.py --all
-```
-Collects all 12,000+ available cards in the database.
-
-**Custom Range**:
-```bash
-python data/scraper.py --pages 10
-```
-Scrapes 10 pages (1,000 cards). Adjust the number as needed.
-
-**Default (500 cards)**:
+To update the card database:
 ```bash
 python data/scraper.py
-```
-Quick test with 5 pages (500 cards).
-
-### Update Process
-
-To refresh the card database with new releases:
-```bash
-python data/scraper.py --all
 python pipeline/build_pipeline.py
 ```
-
-This will fetch the latest card data and rebuild the search index with current information.
 
 ## 🤝 Contributing
 

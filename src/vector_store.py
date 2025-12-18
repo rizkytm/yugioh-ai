@@ -25,7 +25,11 @@ class VectorStoreBuilder:
 
         data = loader.load()
 
-        splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=800,  # Smaller chunks for better context preservation
+            chunk_overlap=200,  # Add overlap to maintain context between chunks
+            separators=["\n\n", "\n", " ", ""]  # Better separators for card data
+        )
         texts = splitter.split_documents(data)
 
         db = Chroma.from_documents(texts,self.embedding,persist_directory=self.persist_dir)

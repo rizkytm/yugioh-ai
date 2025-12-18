@@ -13,7 +13,15 @@ class YuGiOhRecommendationPipeline:
 
             vector_builder = VectorStoreBuilder(csv_path="" , persist_dir=persist_dir)
 
-            retriever = vector_builder.load_vector_store().as_retriever()
+            # Enhanced retriever configuration for better search results
+            vector_store = vector_builder.load_vector_store()
+            retriever = vector_store.as_retriever(
+                search_type="similarity_score_threshold",
+                search_kwargs={
+                    "k": 10,  # Retrieve more documents for better matching
+                    "score_threshold": 0.15  # Even lower threshold to catch more relevant matches
+                }
+            )
 
             self.recommender = YuGiOhRecommender(retriever,GROQ_API_KEY,MODEL_NAME)
 

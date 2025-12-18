@@ -35,7 +35,7 @@ class YuGiOhDataLoader:
         return any(keyword in card_type for keyword in monster_keywords)
 
     def create_combined_info(self, row: pd.Series) -> str:
-        """Create combined information string for semantic search"""
+        """Create combined information string for semantic search with name emphasis"""
         name = row['name'] if pd.notna(row['name']) else ''
         card_type = row['type'] if pd.notna(row['type']) else ''
         desc = row['desc'] if pd.notna(row['desc']) else ''
@@ -43,8 +43,12 @@ class YuGiOhDataLoader:
         attribute = row['attribute'] if pd.notna(row['attribute']) else ''
         archetype = row['archetype'] if pd.notna(row['archetype']) else ''
 
-        # Build base info
-        info_parts = [f"Card: {name}", f"Type: {card_type}"]
+        # Build base info with name emphasis for better search
+        info_parts = [
+            f"Card Name: {name}",  # Emphasize the card name
+            f"{name}",  # Add name again for better matching
+            f"Card Type: {card_type}"
+        ]
 
         # Add race if available
         if race:
@@ -54,7 +58,7 @@ class YuGiOhDataLoader:
         if attribute:
             info_parts.append(f"Attribute: {attribute}")
 
-        # Handle monster-specific fields
+        # Handle monster-specific fields with clearer formatting
         if self.is_monster_card(card_type):
             atk = row['atk'] if pd.notna(row['atk']) and row['atk'] != 0 else ''
             def_ = row['def'] if pd.notna(row['def']) and row['def'] != 0 else ''
@@ -62,10 +66,22 @@ class YuGiOhDataLoader:
             rank = row['rank'] if pd.notna(row['rank']) and row['rank'] != 0 else ''
             linkval = row['linkval'] if pd.notna(row['linkval']) and row['linkval'] != 0 else ''
 
+            # More explicit ATK/DEF formatting for better parsing
             if atk:
-                info_parts.append(f"ATK: {int(atk)}")
+                info_parts.append(f"{name} ATK: {int(atk)}")
+                info_parts.append(f"ATK {int(atk)}")
+                # Add ATK range indicators for search
+                if int(atk) >= 4000:
+                    info_parts.append(f"4000+ ATK High Power Monster")
+                elif int(atk) >= 3000:
+                    info_parts.append(f"3000+ ATK High Power Monster")
+                elif int(atk) >= 2500:
+                    info_parts.append(f"2500+ ATK Strong Monster")
+                elif int(atk) >= 2000:
+                    info_parts.append(f"2000+ ATK Moderate Power Monster")
             if def_:
-                info_parts.append(f"DEF: {int(def_)}")
+                info_parts.append(f"{name} DEF: {int(def_)}")
+                info_parts.append(f"DEF {int(def_)}")
             if level:
                 info_parts.append(f"Level: {int(level)}")
             elif rank:
@@ -77,9 +93,47 @@ class YuGiOhDataLoader:
         if archetype:
             info_parts.append(f"Archetype: {archetype}")
 
-        # Add effect description (most important for search)
+        # Add effect description with special emphasis for card relationships
         if desc:
             info_parts.append(f"Effect: {desc}")
+
+            # Special handling for fusion materials
+            if 'Fusion Monster' in card_type and (' + ' in desc or '+"' in desc):
+                info_parts.append(f"Fusion Materials: {desc}")
+                info_parts.append(f"Fusion Material: {name}")
+
+            # Identify card relationships and mentions
+            desc_lower = desc.lower()
+
+            # Find cards mentioned in this card's description (in quotes)
+            import re
+            mentioned_cards = re.findall(r'""([^"]+)""', desc)
+            for mentioned_card in mentioned_cards:
+                mentioned_card_clean = mentioned_card.strip()
+                if mentioned_card_clean and mentioned_card_clean != name:
+                    info_parts.append(f"mentions {mentioned_card_clean}")
+                    info_parts.append(f"supports {mentioned_card_clean}")
+                    info_parts.append(f"synergy with {mentioned_card_clean}")
+
+            # Look for common relationship keywords
+            relationship_keywords = [
+                ('support', 'supports'),
+                ('synergy', 'synergy'),
+                ('combo', 'combo'),
+                ('archetype', 'archetype'),
+                ('series', 'series'),
+                ('summon', 'summons'),
+                ('special summon', 'special summons')
+            ]
+
+            for keyword, action in relationship_keywords:
+                if keyword in desc_lower:
+                    info_parts.append(f"{action} other cards")
+                    info_parts.append(f"card relationship")
+
+        # Add search-friendly keywords
+        info_parts.append(f"Search for {name}")
+        info_parts.append(f"Find {name}")
 
         return ' '.join(info_parts)
 
