@@ -83,6 +83,7 @@ embeddings/
 data/*.json
 data/*.xml
 data/*.parquet
+data/*.txt
 
 # ML and model files
 *.pkl
