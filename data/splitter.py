@@ -15,7 +15,7 @@ with open(input_file, 'r', encoding='utf-8') as f:
         
         if len(current_rows) == rows_per_file:
             # Write to file with header
-            with open(f'output_{file_num}.txt', 'w', encoding='utf-8') as out:
+            with open(f'data/output_{file_num}.txt', 'w', encoding='utf-8') as out:
                 writer = csv.writer(out)
                 writer.writerow(header)  # Write header first
                 writer.writerows(current_rows)
@@ -26,7 +26,7 @@ with open(input_file, 'r', encoding='utf-8') as f:
     
     # Write remaining rows (if any)
     if current_rows:
-        with open(f'output_{file_num}.txt', 'w', encoding='utf-8') as out:
+        with open(f'data/output_{file_num}.txt', 'w', encoding='utf-8') as out:
             writer = csv.writer(out)
             writer.writerow(header)
             writer.writerows(current_rows)
